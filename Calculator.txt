@@ -1,0 +1,348 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+ double evaluate(char* expression);
+ int isOperator(char c);
+ int precedence(char op);
+ double applyOperator(double a,double b,char op);
+ int isValidExp(char* expression);
+
+int isDigit(char digit)
+{
+    return (digit>='0' && digit<='9');
+}
+
+
+int isOperator(char c)
+{
+    return (c=='+' || c=='-'|| c=='*'|| c=='/');
+}
+
+
+double applyOperator(double a,double b,char op)
+{
+    switch(op)
+    {
+        case '+':
+                 return a+b;
+    
+        case '-':
+                 return a-b;
+        case '*':
+                 return a*b;
+        case '/':
+                 return a/b;
+        default:
+                 return 0.0;      //If invalid operator
+    }
+}
+
+int isValidExp(char* expression)
+{
+    int open=0; //open parantheses
+    
+    for(int i=0;expression[i]!='\0';i++)
+    {
+        if(!isDigit(expression[i]) && !isOperator(expression[i]) && expression[i]!='('&& expression[i]!=')')
+        {
+            
+            //Invalid characters is expressions
+            
+            return 0;
+        }
+        if(expression[i]=='(')
+        {
+            open++;
+        }
+        else if(expression[i]==')')
+        {
+            open--;
+            if(open<0)   //More closing parantheses than opening parantheses
+            {
+                return 0;
+            }
+        }
+    }
+    if(open!=0)
+    {
+        return 0;
+    }
+  return 1;
+}
+
+
+int precedence(char op)
+{
+    if(op=='+'|| op=='-')
+    {
+        return 1;
+    }
+    else if(op=='*'|| op=='/')
+    {
+        return 2;
+    }
+    return 0;
+}
+
+double evaluate(char* expression)
+{
+    double numbers[100]; //Stack for numbers
+    int topn=-1;
+    char operators[100];  //stack for operators
+    int topop=-1;
+    int i;
+    
+    for(i=0;expression[i]!='\0';i++)
+    {
+        if(isDigit(expression[i]))
+        {
+           double num=0;
+           while(isDigit(expression[i]))
+           {
+               num=num*10+(expression[i]-'0'); //Extract numberic value from character digits
+               i++;
+           }
+           i--;
+           
+           //push the number onto the numbers stack
+           
+           numbers[++topn]=num;
+        }
+        else if(expression[i]=='(')
+        {
+            //Push the opening parantheses onto the operators stack
+            operators[++topop]=expression[i];
+        }
+        
+        else if(expression[i]==')')
+        {
+            //If closing parantheses is encountered then evaluate the expression until open is found
+            
+            while(topop!=-1 && operators[topop]!='(')
+            {
+                double n1=numbers[topn--];
+                double n2=numbers[topn--];
+                char op=operators[topop--];
+                
+                numbers[++topn]=applyOperator(n2,n1,op);
+            }
+            //pop the opening parantheses
+            topop--;
+            
+        }
+        else if(isOperator(expression[i]))
+        {
+            //If character is an operator then we have to check the precedence of operators and push onto the stack
+            
+            while(topop!=-1&& precedence(operators[topop])>=precedence(expression[i]))
+            {
+                double n1=numbers[topn--];
+                double n2=numbers[topn--];
+                char op=operators[topop--];
+                numbers[++topn]=applyOperator(n2,n1,op);
+            }
+            
+            //push the current operator onto the operators stack
+            
+            operators[++topop]=expression[i];
+            
+        }
+        
+    }
+    
+    //evaluate the remaining operators in the stack
+    while(topop!=-1)
+    {
+        double n1=numbers[topn--];
+        double n2=numbers[topn--];
+        char op=operators[topop--];
+        numbers[++topn]=applyOperator(n2,n1,op);
+    }
+    
+    //Return the final result
+    
+    return numbers[topn];
+    
+}
+
+int main()
+{
+    char expression[100];
+    printf("Enter the mathematical expression:");
+    fgets(expression,sizeof(expression),stdin);
+    
+    expression[strcspn(expression,"\n")]='\0';
+    
+    if(!isValidExp(expression))
+    {
+        printf("Invalid expression...\n");
+        return 1;
+    }
+    
+    double result= evaluate(expression);
+    printf("Result: %lf\n", result);
+    
+    return 0;
+}
+
+
+
+
+
+
+
+
+// Calculator program
+
+
+
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+ double evaluate(char* expression);
+ int isOperator(char c);
+ int precedence(char op);
+ double applyOperator(double a,double b,char op);
+ int isValidExp(char* expression);
+int isDigit(char digit);
+
+int isDigit(char digit)
+{
+    return (digit>='0' && digit<='9');
+}
+
+
+int isOperator(char c)
+{
+    return (c=='+' || c=='-'|| c=='*'|| c=='/');
+}
+
+
+double applyOperator(double a,double b,char op)
+{
+    switch(op)
+    {
+        case '+':
+                 return a+b;
+    
+        case '-':
+                 return a-b;
+        case '*':
+                 return a*b;
+        case '/':
+                 return a/b;
+        default:
+                 return 0.0;      //If invalid operator
+    }
+}
+
+int isValidExp(char* expression)
+{
+    
+    for(int i=0;expression[i]!='\0';i++)
+    {
+        if(!isDigit(expression[i]) && !isOperator(expression[i])) 
+        {
+            
+            //Invalid characters is expressions
+            
+            return 0;
+        }
+    }
+   
+  return 1;
+}
+
+
+int precedence(char op)
+{
+    if(op=='+'|| op=='-')
+    {
+        return 1;
+    }
+    else if(op=='*'|| op=='/')
+    {
+        return 2;
+    }
+    return 0;
+}
+
+double evaluate(char* expression)
+{
+    double numbers[100]; //Stack for numbers
+    int topn=-1;
+    char operators[100];  //stack for operators
+    int topop=-1;
+    int i;
+    
+    for(i=0;expression[i]!='\0';i++)
+    {
+        if(isDigit(expression[i]))
+        {
+           double num=0;
+           while(isDigit(expression[i]))
+           {
+               num=num*10+(expression[i]-'0'); //Extract numberic value from character digits
+               i++;
+           }
+           i--;
+           
+           //push the number onto the numbers stack
+           
+           numbers[++topn]=num;
+        }
+    
+        else if(isOperator(expression[i]))
+        {
+            //If character is an operator then we have to check the precedence of operators and push onto the stack
+            
+            while(topop!=-1&& precedence(operators[topop])>=precedence(expression[i]))
+            {
+                double n1=numbers[topn--];
+                double n2=numbers[topn--];
+                char op=operators[topop--];
+                numbers[++topn]=applyOperator(n2,n1,op);
+            }
+            
+            //push the current operator onto the operators stack
+            
+            operators[++topop]=expression[i];
+            
+        }
+        
+    }
+    
+    //evaluate the remaining operators in the stack
+    while(topop!=-1)
+    {
+        double n1=numbers[topn--];
+        double n2=numbers[topn--];
+        char op=operators[topop--];
+        numbers[++topn]=applyOperator(n2,n1,op);
+    }
+    
+    //Return the final result
+    
+    return numbers[topn];
+    
+}
+
+int main()
+{
+    char expression[100];
+    printf("Enter the mathematical expression:");
+    fgets(expression,sizeof(expression),stdin);
+    
+    expression[strcspn(expression,"\n")]='\0';
+    
+    if(!isValidExp(expression))
+    {
+        printf("Invalid expression...\n");
+        return 1;
+    }
+    
+    double result= evaluate(expression);
+    printf("Result: %lf\n", result);
+    
+    return 0;
+}

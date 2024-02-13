@@ -1,0 +1,263 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+// void createLinkedList(struct node**);
+// struct node* createnode();
+// void displayLinkedList(struct node*);
+// void insertAtFirst(struct node**);
+// void insertAtPos(struct node**);
+// int countnode(struct node*);
+
+
+struct node
+{
+    int data;
+    struct node* next;
+};
+
+struct node* createnode()
+{
+    struct node* newnode=NULL;
+    int data;
+    newnode=(struct node*) malloc(sizeof(struct node));
+    if(newnode==NULL)
+    {
+        printf("Memory not allocated");
+        return;
+    }
+    else{
+        printf("\nEnter the data:");
+        scanf("%d",&newnode->data);
+        newnode->next=NULL;
+        return newnode;
+    }
+}
+
+void createLinkedList(struct node** head)
+{
+    struct node* travnode=*head;
+    struct node* newnode=NULL;
+    newnode=createnode();
+    if(*head==NULL)
+    {
+        *head=newnode;
+    }
+    else
+    {
+        while(travnode->next!=NULL)
+        {
+            travnode=travnode->next;
+        }
+        travnode->next=newnode;
+    }
+}
+
+void displayLinkedList(struct node* head)
+{
+    while(head!=NULL)
+    {
+        printf("%d->",head->data);
+        head=head->next;
+    }
+}
+
+void insertAtFirst(struct node** head)
+{
+    
+    struct node* newnode=NULL;
+    newnode=createnode();
+    newnode->next=*head;
+    *head=newnode;
+    
+}
+void insertAtPos(struct node** head)
+{
+    struct node* newnode=NULL;
+    struct node* travnode=NULL;
+    int pos,n,i;
+    printf("Enter the position:");
+    scanf("%d",&pos);
+    n=countnode(*head);
+    if(pos==1)
+    {
+        insertAtFirst(head);   // head means address of first & *head means value of first
+    }
+    else if(pos==n+1)
+    {
+        createLinkedList(head);
+    }
+    else if(pos<1 || pos>n+1)
+    {
+        printf("Invalid position...");
+        return;
+    }
+    else
+    {
+        newnode=createnode();
+        for(i=0;i<pos-1;i++)
+        {
+            travnode=travnode->next;
+            
+        }
+        newnode->next=travnode->next;
+        travnode->next=newnode;
+    }
+}
+
+
+int countnode(struct node* head)
+{
+    int count=0;
+    while(head!=NULL)
+    {
+        count++;
+        head=head->next;
+    }
+    return count;
+}
+
+void deleteAtLast(struct node** head)
+{
+    struct node* travnode=NULL;
+    if(*head==NULL)  //If node not available
+    {
+        printf("Linked list not available...");
+        return;
+    }
+    else if((*head)->next==NULL)    //If we have only one node
+    {
+        free(*head);
+        *head=NULL;
+    }
+    else
+    {
+        
+    while(travnode->next->next!=NULL)  //More than 2 nodes
+    {
+        travnode=travnode->next;
+    }
+    
+    free(travnode->next);
+    travnode->next=NULL;
+    }
+}
+
+void deleteAtFirst(struct node** head)
+{
+   
+    if(*head==NULL)
+    {
+        printf("Linked list not available");
+        return;
+    }
+    else
+    {
+    struct node* tempnode=*head;
+    *head=(*head)->next;
+    free(tempnode);
+    }
+    
+}
+
+void deleteAtPos(struct node** head)
+{
+  int pos,n,i;
+  struct node* travnode1=*head;
+  struct node* travnode2=NULL;
+  printf("Please enter value of position:");
+  scanf("%d",&pos);
+  n=countnode(*head);
+  if(pos==1)
+  {
+      deleteAtFirst(head);
+  }
+  else if(pos==n)
+  {
+      deleteAtLast(head);
+  }
+  else if(pos<1 || pos>n)
+  {
+      printf("Invalid position...");
+      return;
+  }
+  else
+  {
+      for(i=1;i<pos-1;i++)
+      {
+          travnode1=travnode1->next;
+      }
+      travnode2=travnode1->next;
+      travnode1->next=travnode2->next;
+      free(travnode2);
+      
+  }
+}
+
+void sortingLinkedList(struct node* head)
+{
+    struct node* trav1=head;
+    struct node* trav2;
+    int i,temp;
+    for(trav1=head;trav1!=NULL;trav1->next)
+    {
+     for(trav2->next;trav2!=NULL;trav2->next)
+     {
+         if(trav1->next>trav2->data)
+         {
+             temp=trav1->data;
+             trav1->data=trav2->data;
+             trav2->data=temp;
+         }
+     }
+    }
+    printf("\nAfter sorting linked list is::::");
+    while(head!=NULL)
+    {
+        printf("%d->",head->data);
+        head=head->next;
+    }
+}
+
+
+
+void main()
+{
+    int choice;
+    struct node* firstnode=NULL;
+    do{
+        printf("\n1.Create linked list");
+        printf("\n2. Display linked list");
+        printf("\n3. Insert at first");
+        printf("\n4. Insert at given position");
+        printf("\n5. Insert at last");
+        printf("\n6. Delete at first");
+        printf("\n7. Delete at position");
+        printf("\n8. Delete at last");
+        printf("\n9. Sorting linked list");
+        printf("\nEnter your choice:");
+        scanf("%d",&choice);
+        switch(choice)
+        {
+        case 1: createLinkedList(&firstnode);
+              break;
+        case 2: displayLinkedList(firstnode);
+              break;
+        case 3: insertAtFirst(&firstnode);
+              break;
+        case 4: insertAtPos(&firstnode);
+              break;
+        case 5: createLinkedList(&firstnode);
+              break;
+        case 6: deleteAtFirst(&firstnode);
+              break;
+        case 7: deleteAtPos(&firstnode);
+              break;
+        case 8: deleteAtLast(&firstnode);
+              break;
+        case 9: sortingLinkedList(firstnode);
+              break;
+        
+        default: printf("Invalid choice");
+        }
+    }while(choice!=0);    
+}
